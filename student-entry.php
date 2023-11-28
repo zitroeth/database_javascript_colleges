@@ -46,7 +46,6 @@
             <button type="button" id="reset-button">Clear Entries</button>
         </h3>
     </form>
-    </table>
 
 </body>
 

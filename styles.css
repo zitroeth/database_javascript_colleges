@@ -40,8 +40,8 @@ input {
 }
 
 rect.btn {
-  stroke: #fff;
-  fill: #b31717;
+  stroke: white;
+  fill: rgb(24, 247, 247);
   fill-opacity: 0;
   stroke-opacity: 0;
 }
