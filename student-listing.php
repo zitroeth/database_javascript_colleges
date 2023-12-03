@@ -69,6 +69,8 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
             $id = intval($value['studid']);
             echo "<tr><td>" . $value['studid'] . "</td><td>" . $value['studlastname'] . "</td><td>" . $value['studfirstname'] . "</td><td>"
                 . $value['studmidname'][0] . "." . "</td><td>" . $value['collfullname'] . "</td><td>" . $value['progfullname'] . "</td><td>" . $value['studyear'] . "</td>
+                ";
+                if(false) echo "
                 <form action='student-update.php' method='post' id='submittingForm'>
 
                 <td>
@@ -83,8 +85,15 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
                 <i class='bi bi-trash3-fill' style='font-size:2rem; color: #b31717;' id='$id'></i>
                 </button>
                 </td>
-
-                </tr>";
+                ";
+                else echo "
+                <td>
+                <i class='bi bi-pencil-square' style='font-size:2rem;'></i>
+                </td>
+                <td>
+                <i class='bi bi-trash3-fill' style='font-size:2rem; color: #b31717;' id='$id'></i>
+                </td>";
+                echo "</tr>";
         }
         ?>
     </table>

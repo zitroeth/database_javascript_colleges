@@ -43,3 +43,8 @@ button.invis {
   background: transparent;
   border: none !important;
 }
+
+.card{
+  width:30%;
+  margin-top: 10%;
+}
