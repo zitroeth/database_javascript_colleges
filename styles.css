@@ -11,27 +11,27 @@ input {
   float: left;
 }
 
-#customers {
+#student-table {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
 
-#customers td,
-#customers th {
+#student-table td,
+#student-table th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-#customers tr:nth-child(even) {
+#student-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-#customers tr:hover {
+#student-table tr:hover {
   background-color: #ddd;
 }
 
-#customers th {
+#student-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
@@ -39,9 +39,7 @@ input {
   color: lightgrey;
 }
 
-rect.btn {
-  stroke: white;
-  fill: rgb(24, 247, 247);
-  fill-opacity: 0;
-  stroke-opacity: 0;
+button.invis {
+  background: transparent;
+  border: none !important;
 }

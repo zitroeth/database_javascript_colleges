@@ -23,3 +23,7 @@ if (
 } else {
     echo "eror";
 }
+?>
+<form action="student-listing.php">
+        <input type="submit" value="Student List" class="btn btn-primary"/>
+</form>

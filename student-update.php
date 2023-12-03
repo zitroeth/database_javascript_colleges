@@ -1,16 +1,23 @@
 <?php
 include 'db.php';
+$collegeQuery = $dbconnection->prepare('SELECT * from colleges');
+$collegeQuery->execute();
+$colleges = $collegeQuery->fetchAll(PDO::FETCH_ASSOC);
 
-$sth = $dbconnection->prepare('
+$programQuery = $dbconnection->prepare('select colleges.collid, colleges.collfullname, programs.progid, programs.progfullname from colleges inner join programs on colleges.collid = programs.progcollid');
+$programQuery->execute();
+$programs = $programQuery->fetchALL(PDO::FETCH_ASSOC);
+
+$student = $dbconnection->prepare('
 select studid, studfirstname, studlastname, studmidname, studprogid, studcollid, studyear,
 collfullname, progfullname
 from students 
 inner join colleges on colleges.collid = students.studcollid
 inner join programs on programs.progid = students.studprogid 
 where students.studid=?');
-$sth->bindParam(1, $_POST['id'], PDO::PARAM_INT);
-$sth->execute();
-$updateInfo = $sth->fetch(PDO::FETCH_ASSOC);
+$student->bindParam(1, $_POST['id'], PDO::PARAM_INT);
+$student->execute();
+$updateInfo = $student->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -21,8 +28,7 @@ $updateInfo = $sth->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Update</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="axios-student-update.js" defer></script>
+
 </head>
 
 <body>
@@ -43,15 +49,10 @@ $updateInfo = $sth->fetch(PDO::FETCH_ASSOC);
 
             <label for="college-select">Colleges</label>
             <select name="college-select" id="college-select">
-                <?php
-                echo "<option value='Select College'>----------- Select College -----------</option>";
-                include 'colleges-list.php';
-                ?>
             </select><br><br>
 
             <label for="program-select">Programs</label>
             <select name="program-select" id="program-select">
-                <option>----------- Select Program -----------</option>
             </select><br><br>
 
             <label for="stud-year">Year</label>
@@ -67,20 +68,65 @@ $updateInfo = $sth->fetch(PDO::FETCH_ASSOC);
 </html>
 
 <script>
-    //const urlParams = new URLSearchParams(window.location.search);
-    //const id = urlParams.get('id');
+    const collegeSelect = document.getElementById('college-select');
+    const programSelect = document.getElementById('program-select');
+    const resetButton = document.getElementById('reset-button');
+
+    var colleges = <?php echo json_encode($colleges) ?>;
+    var programs = <?php echo json_encode($programs) ?>;
     var post = <?php echo json_encode($_POST) ?>;
     var updateInfo = <?php echo json_encode($updateInfo) ?>;
-    document.getElementById('reset-button').addEventListener("click", setDefaultInfo)
-    
-    console.log(updateInfo);
-    document.getElementById('stud-id').value = post.id;
-    document.getElementById('stud-first-name').value = updateInfo.studfirstname;
-    document.getElementById('stud-middle-name').value = updateInfo.studmidname;
-    document.getElementById('stud-last-name').value = updateInfo.studlastname;
-    document.getElementById('college-select').value = updateInfo.studcollid;
-    document.getElementById('program-select').value = updateInfo.studprogid;
-    document.getElementById('stud-year').value = updateInfo.studyear;
+
+    window.onload = function() {
+        window.onload = collegeOptions();
+        window.onload = setDefaultInfo();
+        window.onload = programOptions();
+        window.onload = setDefaultInfo();
+    }
+
+    function collegeOptions() {
+        removeOptions(collegeSelect);
+        var option = document.createElement("option");
+        option.text = "----------- Select College -----------";
+        option.value = "Select College";
+        collegeSelect.add(option);
+
+        colleges.forEach(element => {
+            var option = document.createElement("option");
+            option.text = element.collfullname;
+            option.value = element.collid;
+            collegeSelect.add(option);
+        })
+    }
+
+    function programOptions() {
+        removeOptions(programSelect);
+        var option = document.createElement("option");
+        option.text = "----------- Select Program -----------";
+        option.value = "Select Program";
+        programSelect.add(option);
+
+        filteredPrograms = programs.filter(element => element.collid == collegeSelect.value);
+
+        filteredPrograms.forEach(element => {
+            var option = document.createElement("option");
+            option.text = element.progfullname;
+            option.value = element.progid;
+            programSelect.add(option);
+        })
+    }
+
+    function removeOptions(selectElement) {
+        var i, L = selectElement.options.length - 1;
+        for (i = L; i >= 0; i--) {
+            selectElement.remove(i);
+        }
+    }
+
+    function resetForm() {
+        document.getElementById("student-entry-form").reset();
+        programOptions();
+    }
 
     function setDefaultInfo() {
         document.getElementById('stud-id').value = post.id;
@@ -91,4 +137,8 @@ $updateInfo = $sth->fetch(PDO::FETCH_ASSOC);
         document.getElementById('program-select').value = updateInfo.studprogid;
         document.getElementById('stud-year').value = updateInfo.studyear;
     }
+
+    collegeSelect.addEventListener('change', programOptions);
+    resetButton.addEventListener('click', resetForm);
+    document.getElementById('reset-button').addEventListener("click", setDefaultInfo)
 </script>
