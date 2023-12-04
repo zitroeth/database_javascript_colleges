@@ -11,6 +11,24 @@
 
 <body>
 
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/database_javascript_colleges">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="student-entry.php">Student Entry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user-registration.php">User Registration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user-login.php">User Login</a>
+                </li>
+        </div>
+    </nav>
+
     <div class="card text-bg-dark mb-3 mx-auto" style="width:30%; margin-top: 10%;">
         <div class="card-header">
             <h2>User Registration</h2>
@@ -29,7 +47,7 @@
                 </div><br>
 
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="floating-password" name="floating-password">
+                    <input type="password" class="form-control" id="floating-password" name="floating-password">
                     <label for="floating-password">Password</label>
                 </div><br>
 

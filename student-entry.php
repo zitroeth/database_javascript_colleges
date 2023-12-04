@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db.php';
 $collegeQuery = $dbconnection->prepare('SELECT * from colleges');
 $collegeQuery->execute();
@@ -17,10 +18,38 @@ $programs = $programQuery->fetchALL(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Entry</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 </head>
 
 <body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/database_javascript_colleges">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="student-entry.php">Student Entry</a>
+                </li>
+                <?php if(!isset($_SESSION["userid"])) 
+                    echo "<li class='nav-item'>
+                        <a class='nav-link' href='user-registration.php'>User Registration</a>
+                        </li>
+                        <li class='nav-item'>
+                            <a class='nav-link' href='user-login.php'>User Login</a>
+                        </li>";
+                ?>
+                <?php if(isset($_SESSION["userid"])) 
+                    echo"<li class='nav-item'>
+                    <a class='nav-link' href='student-listing.php'>Student Listing</a>
+                    </li>";
+                ?>
+        </div>
+    </nav>
+
 
     <form action="student-entry-prep.php" method="post" id="student-entry-form">
         <h3>Student Information Data Entry<br><br>
@@ -48,13 +77,14 @@ $programs = $programQuery->fetchALL(PDO::FETCH_ASSOC);
             <label for="stud-year">Year</label>
             <input type="number" id="stud-year" name="stud-year"><br><br>
 
-            <input type="submit" value="Submit">
-            <button type="button" id="reset-button">Clear Entries</button>
+            <input type="submit" value="Submit" class="btn btn-primary">
+            <button type="button" id="reset-button" class="btn btn-danger">Clear Entries</button>
         </h3>
     </form>
 </body>
 
 </html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script>
     const collegeSelect = document.getElementById('college-select');
     const programSelect = document.getElementById('program-select');

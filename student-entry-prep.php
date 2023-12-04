@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db.php';
 
 $sth = $dbconnection->prepare("INSERT INTO `usjr`.`students` VALUES(?,?,?,?,?,?,?)");
@@ -21,7 +22,15 @@ if (
 } else {
     echo "eror";
 }
-?>
-<form action="student-listing.php">
-        <input type="submit" value="Student List" class="btn btn-primary"/>
-</form>
+
+if (!isset($_SESSION["userid"])) { ?>
+    <form action="user-login.php">
+        <input type="submit" value="User Login" class="btn btn-primary" />
+    </form>
+<?php exit;
+} else { ?>
+    <form action="student-listing.php">
+        <input type="submit" value="Student List" class="btn btn-primary" />
+    </form>
+<?
+} ?>

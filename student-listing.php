@@ -1,4 +1,14 @@
 <?php
+session_start(); 
+
+if (!isset($_SESSION["userid"])) {
+    echo "Log in first!"; ?>
+    <form action="user-login.php">
+        <input type="submit" value="User Login" class="btn btn-primary"/>
+    </form>
+<?php exit;
+}
+
 include 'db.php';
 $sth = $dbconnection->prepare('
 select students.studid, students.studfirstname, students.studlastname, students.studmidname, students.studprogid, students.studcollid, students.studyear,
@@ -45,10 +55,17 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
         </div>
     </div>
 
+
     <form action="student-entry.php">
-        <input type="submit" value="Add New Student" class="btn btn-primary"/>
+        <input type="submit" value="Add New Student" class="btn btn-primary" />
     </form>
 
+    <label style="position:absolute; top:0; right:0; width: 15% !important;">
+    You are logged in as: <?php echo (intval($_SESSION['usertype'])==2) ? "<b>admin</b> ": "<b>student</b> " ?>
+    </label>
+    <form action="user-login.php">
+        <input type="submit" value="Logout" class="btn btn-success" id='logout-button' style="position:absolute; top:0; right:0;" />
+    </form>
 
     <table id="student-table">
         <tr>
@@ -70,30 +87,38 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
             echo "<tr><td>" . $value['studid'] . "</td><td>" . $value['studlastname'] . "</td><td>" . $value['studfirstname'] . "</td><td>"
                 . $value['studmidname'][0] . "." . "</td><td>" . $value['collfullname'] . "</td><td>" . $value['progfullname'] . "</td><td>" . $value['studyear'] . "</td>
                 ";
-                if(false) echo "
+            if ( $_SESSION['usertype']==2 || $_SESSION['userid'] == $id) echo "
                 <form action='student-update.php' method='post' id='submittingForm'>
 
                 <td>
-                <button name='id' value='$id' class='invis'>
-                    <i class='bi bi-pencil-square' style='font-size:2rem;'></i>
+                <button name='id' value='$id' class='invis' style='margin: 0; padding: 0;'>
+                    <i class='bi bi-pencil-square' style='font-size:2rem; color: #0e3d21;'></i>
                 </button>
                 </td>
                 </form>
 
                 <td>
-                <button name='id' value='$id' class='invis' data-bs-toggle='modal' data-bs-target='#exampleModal' data-bs-whatever='$id'>
+                <button name='id' value='$id' class='invis' data-bs-toggle='modal' data-bs-target='#exampleModal' data-bs-whatever='$id' style='margin: 0; padding: 0;'>
                 <i class='bi bi-trash3-fill' style='font-size:2rem; color: #b31717;' id='$id'></i>
                 </button>
                 </td>
                 ";
-                else echo "
+            else echo "
+                <form action='student-update.php' method='post' id='submittingForm'>
+
                 <td>
-                <i class='bi bi-pencil-square' style='font-size:2rem;'></i>
+                <button name='id' value='$id' class='invis' disabled style='margin: 0; padding: 0;'>
+                    <i class='bi bi-pencil-square' style='font-size:2rem; color: rgba(14, 63, 34, 0.473);'></i>
+                </button>
                 </td>
+                </form>
+
                 <td>
-                <i class='bi bi-trash3-fill' style='font-size:2rem; color: #b31717;' id='$id'></i>
+                <button name='id' value='$id' class='invis' data-bs-toggle='modal' data-bs-target='#exampleModal' data-bs-whatever='$id' disabled style='margin: 0; padding: 0;'>
+                <i class='bi bi-trash3-fill' style='font-size:2rem; color: #b317177a;' id='$id'></i>
+                </button>
                 </td>";
-                echo "</tr>";
+            echo "</tr>";
         }
         ?>
     </table>

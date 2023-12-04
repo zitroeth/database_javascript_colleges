@@ -1,4 +1,10 @@
 <?php
+session_start(); 
+
+if (!isset($_SESSION["userid"])) {
+    exit;
+}
+
 include 'db.php';
 $collegeQuery = $dbconnection->prepare('SELECT * from colleges');
 $collegeQuery->execute();
