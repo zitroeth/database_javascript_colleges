@@ -1,5 +1,13 @@
 <?php
 session_start();
+
+if (!isset($_SESSION["userid"])) {
+    echo "Log in first!"; ?>
+    <form action="user-login.php">
+        <input type="submit" value="User Login" class="btn btn-primary" />
+    </form>
+<?php exit;
+}
 include 'db.php';
 
 $sth = $dbconnection->prepare("INSERT INTO `usjr`.`students` VALUES(?,?,?,?,?,?,?)");
@@ -32,5 +40,5 @@ if (!isset($_SESSION["userid"])) { ?>
     <form action="student-listing.php">
         <input type="submit" value="Student List" class="btn btn-primary" />
     </form>
-<?
+<?php
 } ?>

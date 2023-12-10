@@ -11,11 +11,9 @@ if (!isset($_SESSION["userid"])) {
 
 include 'db.php';
 $sth = $dbconnection->prepare('
-select students.studid, students.studfirstname, students.studlastname, students.studmidname, students.studprogid, students.studcollid, students.studyear,
-colleges.collfullname, programs.progfullname
-from students 
-inner join colleges on colleges.collid = students.studcollid
-inner join programs on programs.progid = students.studprogid');
+select progid, progfullname, progshortname, collfullname, deptfullname from programs 
+inner join colleges on programs.progcollid = colleges.collid
+inner join departments on programs.progcolldeptid = departments.deptid');
 $sth->execute();
 $result = $sth->fetchALL(PDO::FETCH_ASSOC);
 ?>
@@ -26,7 +24,7 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Listing</title>
+    <title>Program Listing</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -34,7 +32,7 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
 
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark" style='position: -webkit-sticky; position: sticky; top: 0px; z-index: 1020;'>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark" style='position: -webkit-sticky; position: sticky; top: 0px; z-index: 1020;'> 
         <div class="container-fluid">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
@@ -55,20 +53,20 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
     <nav class="navbar bg-body-tertiary" style='position: -webkit-sticky; position: sticky; top: 56px; z-index: 1019;'>
         <div class="container-fluid">
             <div>
-                <form action="student-entry.php">
-                    <input type="submit" value="Add New Student" class="btn btn-primary" />
+                <form action="program-entry.php">
+                    <input type="submit" value="Add New Program" class="btn btn-primary" />
                 </form>
             </div>
             <div>
-                <h2>Student Listing</h2>
+                <h2>Program Listing</h2>
             </div>
 
-            <div style='display: flex; flex-direction: row;'>
+            <div style='display: flex; flex-direction: row;'> 
                 <label for='logout-button'>
                     You are logged in as: <?php echo (intval($_SESSION['usertype']) == 2) ? "<b>admin</b> " : "<b>student</b> " ?>
                 </label>
                 <form action="user-login.php">
-                    <input type="submit" value="Logout" class="btn btn-success" id='logout-button' />
+                    <input type="submit" value="Logout" class="btn btn-success" id='logout-button'/>
                 </form>
             </div>
         </div>
@@ -87,7 +85,7 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form action="student-update-delete.php" method="post" id='submittingForm'>
+                    <form action="program-delete.php" method="post" id='submittingForm'>
                         <button class="btn btn-danger" name="id" data-bs-dismiss="modal" id='delete-button'>Delete</button>
                     </form>
                 </div>
@@ -97,32 +95,24 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
 
 
 
-    <form action="user-login.php">
-        <input type="submit" value="Logout" class="btn btn-success" id='logout-button' style="position:absolute; top:0; right:0;" />
-    </form>
-
     <table id="student-table">
         <tr style='position: -webkit-sticky; position: sticky; top: 118px; z-index: 1018;'>
             <th>ID</th>
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>Middle Initial</th>
+            <th>Full Name</th>
+            <th>Short Name</th>
             <th>College</th>
-            <th>Program Enrolled</th>
-            <th>Year</th>
-            <th>Update</th>
-            <th>Delete</th>
+            <th>Department</th>
+            <th width='1'>Update</th>
+            <th width='1'>Delete</th>
         </tr>
 
         <?php
 
         foreach ($result as $value) {
-            $id = intval($value['studid']);
-            echo "<tr><td>" . $value['studid'] . "</td><td>" . $value['studlastname'] . "</td><td>" . $value['studfirstname'] . "</td><td>"
-                . $value['studmidname'][0] . "." . "</td><td>" . $value['collfullname'] . "</td><td>" . $value['progfullname'] . "</td><td>" . $value['studyear'] . "</td>
-                ";
-            if ($_SESSION['usertype'] == 2 || $_SESSION['userid'] == $id) echo "
-                <form action='student-update.php' method='post' id='submittingForm'>
+            $id = intval($value['progid']);
+            echo "<tr><td>" . $value['progid'] . "</td><td>" . $value['progfullname'] . "</td><td>" . $value['progshortname'] . "</td><td>" . $value['collfullname'] . "</td><td>" . $value['deptfullname'] . "</td>";
+            if ($_SESSION['usertype'] == 2) echo "
+                <form action='program-update.php' method='post' id='submittingForm'>
 
                 <td>
                 <button name='id' value='$id' class='invis' style='margin: 0; padding: 0;'>
@@ -138,7 +128,7 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
                 </td>
                 ";
             else echo "
-                <form action='student-update.php' method='post' id='submittingForm'>
+                <form action='program-update.php' method='post' id='submittingForm'>
 
                 <td>
                 <button name='id' value='$id' class='invis' disabled style='margin: 0; padding: 0;'>
@@ -177,6 +167,6 @@ $result = $sth->fetchALL(PDO::FETCH_ASSOC);
         const modalBody = exampleModal.querySelector('.modal-body')
         const deleteButton = document.getElementById('delete-button')
         deleteButton.value = userid
-        modalBody.textContent = `Are you sure you want to delete User ID#${userid}?`
+        modalBody.textContent = `Are you sure you want to delete Program ID#${userid}?`
     })
 </script>

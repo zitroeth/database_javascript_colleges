@@ -9,18 +9,19 @@ if (!isset($_SESSION["userid"])) {
 <?php exit;
 }
 include 'db.php';
-
-$sth = $dbconnection->prepare("delete from students where studid = ?");
+$prep= $dbconnection->prepare("SET FOREIGN_KEY_CHECKS=0");
+$prep->execute();
+$sth = $dbconnection->prepare("delete from programs where progid = ?");
 
 $sth->bindParam(1, $_POST['id'], PDO::PARAM_INT);
 
 
 if($sth->execute()){
-    echo "User ID#".$_POST['id']." deleted successfully.";
+    echo "Program ID#".$_POST['id']." deleted successfully.";
 }else{
     echo "error";
 }
 ?>
-<form action="student-listing.php">
-        <input type="submit" value="Student List" class="btn btn-primary"/>
+<form action="program-listing.php">
+        <input type="submit" value="Program List" class="btn btn-primary"/>
 </form>

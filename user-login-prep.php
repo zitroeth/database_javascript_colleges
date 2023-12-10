@@ -8,16 +8,11 @@ $sth->bindParam(1, $_POST['floating-username'], PDO::PARAM_STR);
 $sth->execute();
 $result = $sth->fetch(PDO::FETCH_ASSOC);
 
-if(password_verify($_POST['floating-password'], $result['userpass'])){
-    echo "login success";
+if($result!=null && password_verify($_POST['floating-password'], $result['userpass'])){
     $_SESSION['userid']=$result['userid'];
     $_SESSION['usertype']=$result['usertype'];
+    ?><meta http-equiv="refresh" content="0; URL='student-listing.php'"/><?php
 }else{
     echo "login failed";
+    ?><meta http-equiv="refresh" content="3; URL='user-login.php'"/> <?php
 }
-
-
-?>
-<form action="student-listing.php">
-        <input type="submit" value="Student Listing" class="btn btn-primary"/>
-</form>

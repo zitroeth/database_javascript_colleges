@@ -1,4 +1,13 @@
 <?php
+session_start();
+
+if (!isset($_SESSION["userid"])) {
+    echo "Log in first!"; ?>
+    <form action="user-login.php">
+        <input type="submit" value="User Login" class="btn btn-primary" />
+    </form>
+<?php exit;
+}
 session_start(); 
 
 if (!isset($_SESSION["userid"])) {
@@ -129,11 +138,6 @@ $updateInfo = $student->fetch(PDO::FETCH_ASSOC);
         }
     }
 
-    function resetForm() {
-        document.getElementById("student-entry-form").reset();
-        programOptions();
-    }
-
     function setDefaultInfo() {
         document.getElementById('stud-id').value = post.id;
         document.getElementById('stud-first-name').value = updateInfo.studfirstname;
@@ -145,6 +149,5 @@ $updateInfo = $student->fetch(PDO::FETCH_ASSOC);
     }
 
     collegeSelect.addEventListener('change', programOptions);
-    resetButton.addEventListener('click', resetForm);
-    document.getElementById('reset-button').addEventListener("click", setDefaultInfo)
+    resetButton.addEventListener('click', setDefaultInfo);
 </script>
